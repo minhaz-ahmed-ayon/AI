@@ -1,0 +1,103 @@
+from random import *
+import math 
+
+def evaluation_function(x):
+  return int(15*x - x**2)
+
+def dec_to_bin(d):
+  return bin(d).replace("0b","")
+
+def bin_to_str(b):
+  if(len(str(b)) == 1):
+    return ("000"+str(b))
+  elif(len(str(b)) == 2):
+    return ("00"+str(b))
+  elif(len(str(b)) == 3):
+    return ("0"+str(b))
+  else:
+    return str(b)
+
+def bin_to_dec(b):
+  return int(b, 2)
+
+def crossing(b1, b2):
+  k1 = list(b1)
+  k2 = list(b2)
+
+  t1 = k1[2:4]
+  t2 = k2[2:4]
+
+  k1[2] = t2[0]
+  k1[3] = t2[1]
+
+  k2[2] = t1[0]
+  k2[3] = t1[1]
+
+  s1 = s2 = '0b'
+
+  for f in range(len(b1)):
+    s1 += k1[f]
+    s2 += k2[f]
+
+  return [bin_to_dec(s1), bin_to_dec(s2)]
+
+
+
+def crossover(genes):
+  mutated_genes = {}
+  genes_for_mutation = []
+  for x in genes:
+    genes_for_mutation.append(bin_to_str(dec_to_bin(x)))
+
+  n = math.floor(len(genes)/2)
+
+  k = 0
+  for g in genes:
+    if k>=n:
+      break
+    genes_for_mutation[k], genes_for_mutation[-(k+1)] = crossing(genes_for_mutation[k], genes_for_mutation[-(k+1)])
+    k += 1
+  
+  
+  for x in genes_for_mutation:
+    mutated_genes.update({x: bin_to_str(dec_to_bin(x))})
+
+  return [x for x in mutated_genes]
+
+
+def initial_fitness():
+  population_size = 6
+  possibility_rate_of_crossover = 0.7
+  x = [] 
+  
+  for i in range(population_size):
+    x.append(randint(0, 15))
+
+  print(x)
+
+ 
+
+  number_of_genes_should_be_evaluated = int(len(x)*possibility_rate_of_crossover)
+ 
+
+  choromosome_fitness = []
+
+
+  m = []
+  for ppp in range(number_of_genes_should_be_evaluated):
+    m.append(x[ppp])
+
+  y = crossover(m)
+  for k in range(len(y)):
+    choromosome_fitness.append(evaluation_function(y[k]))
+  
+
+  print(choromosome_fitness)
+  print(max(choromosome_fitness))
+  print("   ")
+  print()
+
+
+
+for k in range(100):
+  initial_fitness()
